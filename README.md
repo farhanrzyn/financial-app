@@ -29,7 +29,8 @@ Follow these steps to run the project locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/username-anda/personal-finance-dashboard.git](https://github.com/username-anda/personal-finance-dashboard.git)
-cd personal-finance-dashboard
+git clone https://github.com/farhanrzyn/financial-app.git
+cd financial-app
 ```
+
 
