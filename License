@@ -1,0 +1,35 @@
+---
+
+### 2. FILE `.gitignore`
+Simpan kode ini dengan nama file `.gitignore` (pastikan ada titik di depannya). Ini standar industri untuk memastikan repository Anda bersih.
+
+```gitignore
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js / NPM (Just in case you use it later)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Firebase specific
+.firebase/
+firebase-debug.log
+firebase.json
+.firebaserc
+
+# Environment variables (Critical for security later)
+.env
+.env.local
