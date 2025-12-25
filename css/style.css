@@ -1,0 +1,443 @@
+/* =========================================
+   1. RESET & VARIABLES
+   ========================================= */
+:root {
+  --bg-dark: #0f172a;
+  --glass-bg: rgba(30, 41, 59, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --primary: #3b82f6;
+  --secondary: #64748b;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --radius: 12px;
+  --font-main: "Poppins", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+}
+body {
+  /* Fallback Color */
+  background-color: var(--bg-dark);
+
+  /* LAYER 1: Gradient Overlay yang lebih TEBAL (Agar data chart menonjol) */
+  /* LAYER 2: Gambar Background (Digital Tech / Blockchain Vibe) */
+  background-image: linear-gradient(
+      to bottom,
+      rgba(15, 23, 42, 0.9),
+      rgba(15, 23, 42, 0.9)
+    ),
+    url("https://www.pixelstalk.net/wp-content/uploads/2016/03/Cool-dark-blue-light-hd-wallpaper.jpg");
+
+  /* Properti Wajib */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+/* =========================================
+   2. LAYOUT & SIDEBAR
+   ========================================= */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid var(--glass-border);
+  position: fixed;
+  height: 100vh;
+  padding: 25px 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 35px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.nav-group {
+  margin-bottom: 25px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--radius);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.menu-item:hover,
+.menu-item.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--text-main);
+}
+.menu-item i {
+  width: 25px;
+}
+
+.global-filter {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--glass-border);
+}
+.filter-select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #1e293b;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: white;
+  outline: none;
+}
+
+/* =========================================
+   3. MAIN CONTENT
+   ========================================= */
+.main-content {
+  margin-left: 260px;
+  flex: 1;
+  padding: 30px;
+  width: calc(100% - 260px);
+}
+.section-title {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+.hidden {
+  display: none !important;
+}
+
+/* =========================================
+   4. CARDS & GRIDS
+   ========================================= */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+/* Special Grid for Dashboard Chart to match height */
+.grid-2-chart {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 25px;
+  align-items: stretch;
+}
+.h-full {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Update Grid untuk menampung 3 Card (Spending, Income, Wallet) */
+.grid-dashboard-custom {
+  display: grid;
+  /* Pada layar besar: 3 kolom sama besar. Layar kecil: tumpuk ke bawah */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+  align-items: stretch; /* Agar tinggi card seragam */
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+/* Stats */
+.stat-card h3 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.stat-card .amount {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.text-success {
+  color: var(--success) !important;
+}
+.text-danger {
+  color: var(--danger) !important;
+}
+.text-primary {
+  color: var(--primary) !important;
+}
+
+/* =========================================
+   5. FORMS & INPUTS
+   ========================================= */
+.form-group {
+  margin-bottom: 15px;
+}
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.form-control {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: white;
+  outline: none;
+  transition: 0.3s;
+}
+.form-control:focus {
+  border-color: var(--primary);
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+.btn-block {
+  width: 100%;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================================
+   6. TABLES
+   ========================================= */
+.table-container {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.9rem;
+}
+th {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+.action-btn:hover {
+  color: white;
+  transform: scale(1.1);
+}
+.action-btn.edit:hover {
+  color: var(--warning);
+}
+.action-btn.del:hover {
+  color: var(--danger);
+}
+
+/* =========================================
+   7. TABS (NEW)
+   ========================================= */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 10px;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+.tab-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+}
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s;
+}
+.tab-content.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Analysis Lists */
+.analysis-list div {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.analysis-list div span:first-child {
+  color: var(--text-muted);
+}
+.analysis-list div span:last-child {
+  font-weight: 600;
+  color: white;
+}
+
+select {
+  -webkit-appearance: none; /* Untuk Chrome, Safari, Opera */
+  -moz-appearance: none; /* Untuk Firefox */
+  appearance: none; /* Standar */
+  /* Opsional: Tambahkan padding untuk memastikan teks tidak menempel panah jika ada */
+  padding-right: 30px;
+  background-image: url("url-ke-ikon-panah-anda.png"); /* Jika ingin ikon custom */
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+/* Untuk Internet Explorer (opsional) */
+select::-ms-expand {
+  display: none;
+}
+
+/* =========================================
+   UX IMPROVEMENT: FULL CLICK DATE PICKER
+   ========================================= */
+
+/* 1. Parent Input Styling */
+input[type="date"] {
+  position: relative; /* Wajib agar child absolute mengikuti area ini */
+  cursor: pointer; /* Indikasi bisa diklik */
+}
+
+/* 2. Pseudo-element Manipulation (The Magic) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0; /* Transparan total */
+  cursor: pointer;
+  z-index: 10; /* Pastikan berada di layer paling atas */
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .grid-2-chart {
+    grid-template-columns: 1fr;
+  }
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  .sidebar {
+    transform: translateX(-100%);
+    transition: 0.3s;
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+}

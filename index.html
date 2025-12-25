@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial - Dashboard</title>
+
+    <link rel="icon" href="img/ico.png" type="image/png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+          "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="app-container">
+      <nav class="sidebar">
+        <div class="logo">
+          <i class="fas fa-wallet"></i>
+          <span>ZyFinn</span>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-label">Main Menu</div>
+          <div class="menu-item active" data-target="dashboard">
+            <i class="fas fa-home"></i> <span class="menu-text">Dashboard</span>
+          </div>
+          <div class="menu-item" data-target="transactions">
+            <i class="fas fa-exchange-alt"></i>
+            <span class="menu-text">Transactions</span>
+          </div>
+          <div class="menu-item" data-target="transfer">
+            <i class="fas fa-random"></i>
+            <span class="menu-text">Transfer</span>
+          </div>
+          <div class="menu-item" data-target="shopping">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="menu-text">Shopping List</span>
+          </div>
+          <div class="menu-item" data-target="analysis">
+            <i class="fas fa-chart-line"></i>
+            <span class="menu-text">Analysis</span>
+          </div>
+        </div>
+
+        <div class="global-filter">
+          <div class="nav-label">Active Period</div>
+          <p style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 5px">
+            Dashboard follows this filter
+          </p>
+          <select id="globalYear" class="filter-select">
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+          </select>
+          <select id="globalMonth" class="filter-select">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+
+          <button
+            id="logoutBtn"
+            class="btn btn-danger btn-block"
+            style="margin-top: 15px"
+          >
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section id="dashboard" class="content-section">
+          <h2 class="section-title">Dashboard Overview</h2>
+
+          <div class="grid-3">
+            <div class="card stat-card">
+              <h3>Net Balance (Period)</h3>
+              <div class="amount text-primary" id="totalBalance">Rp 0</div>
+              <small class="text-muted">Income - Expense (Current Month)</small>
+            </div>
+            <div class="card stat-card">
+              <h3>Total Income</h3>
+              <div class="amount text-success" id="monthlyIncome">Rp 0</div>
+            </div>
+            <div class="card stat-card">
+              <h3>Total Expense</h3>
+              <div class="amount text-danger" id="monthlyExpense">Rp 0</div>
+            </div>
+          </div>
+
+          <div class="grid-dashboard-custom">
+            <div class="card h-full">
+              <h3>Spending by Category</h3>
+              <p
+                class="text-muted"
+                style="font-size: 0.8rem; margin-bottom: 10px"
+              >
+                Expense Only
+              </p>
+              <div class="chart-container">
+                <canvas id="expenseChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card h-full">
+              <h3>Income by Category</h3>
+              <p
+                class="text-muted"
+                style="font-size: 0.8rem; margin-bottom: 10px"
+              >
+                Income Source
+              </p>
+              <div class="chart-container">
+                <canvas id="incomeChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card h-full">
+              <h3 style="margin-bottom: 20px">Wallet Balance</h3>
+              <p
+                class="text-muted"
+                style="font-size: 0.8rem; margin-bottom: 15px"
+              >
+                Real-time Balance (All Time)
+              </p>
+              <div id="platformList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="transactions" class="content-section hidden">
+          <h2 class="section-title">Manage Transactions</h2>
+
+          <div class="card">
+            <form id="transactionForm">
+              <input type="hidden" id="transId" />
+              <div class="grid-3" style="margin-bottom: 0">
+                <div class="form-group">
+                  <label class="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="transDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Type</label>
+                  <select id="transType" class="form-control">
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Platform</label>
+                  <select id="transPlatform" class="form-control">
+                    <option value="BRI">BRI</option>
+                    <option value="BCA">BCA</option>
+                    <option value="Flazz">Flazz</option>
+                    <option value="Wallet">Wallet</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Category</label>
+                  <select id="transCategory" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Amount</label>
+                  <input
+                    type="number"
+                    id="transAmount"
+                    class="form-control"
+                    placeholder="0"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+                <div
+                  class="form-group"
+                  style="display: flex; align-items: flex-end"
+                >
+                  <button
+                    type="submit"
+                    id="btnSaveTrans"
+                    class="btn btn-primary btn-block"
+                  >
+                    Save Transaction
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="card table-container">
+            <table id="transactionTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Details</th>
+                  <th>Amount</th>
+                  <th style="text-align: right">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="transfer" class="content-section hidden">
+          <h2 class="section-title">Transfer Funds</h2>
+          <div class="card">
+            <form id="transferForm">
+              <input type="hidden" id="transferId" />
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="tfDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Amount</label>
+                  <input
+                    type="number"
+                    id="tfAmount"
+                    class="form-control"
+                    required
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">From (Source)</label>
+                  <select id="tfSource" class="form-control">
+                    <option value="BRI">BRI</option>
+                    <option value="BCA">BCA</option>
+                    <option value="Flazz">Flazz</option>
+                    <option value="Wallet">Wallet</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">To (Target)</label>
+                  <select id="tfTarget" class="form-control">
+                    <option value="BRI">BRI</option>
+                    <option value="BCA">BCA</option>
+                    <option value="Flazz">Flazz</option>
+                    <option value="Wallet">Wallet</option>
+                  </select>
+                </div>
+              </div>
+              <button
+                type="submit"
+                id="btnSaveTransfer"
+                class="btn btn-primary"
+              >
+                Execute Transfer
+              </button>
+            </form>
+          </div>
+
+          <div class="card table-container">
+            <h3>Transfer History</h3>
+            <table id="transferTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Source <i class="fas fa-arrow-right"></i> Target</th>
+                  <th>Amount</th>
+                  <th style="text-align: right">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="shopping" class="content-section hidden">
+          <h2 class="section-title">Shopping List</h2>
+          <div class="card">
+            <p class="text-muted">
+              Record your shopping plan here. View Analysis (Estimate vs. Real)
+              in the <strong>Analysis</strong> menu.
+            </p>
+            <form id="shoppingForm">
+              <div class="grid-3">
+                <div class="form-group">
+                  <label class="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="shopDate"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Item Name</label>
+                  <input
+                    type="text"
+                    id="shopItem"
+                    class="form-control"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price Estimate</label>
+                  <input
+                    type="number"
+                    id="shopEstimate"
+                    class="form-control"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Item</button>
+            </form>
+          </div>
+
+          <div class="card table-container">
+            <table id="shoppingTable">
+              <thead>
+                <tr>
+                  <th>Done?</th>
+                  <th>Item</th>
+                  <th>Est Price</th>
+                  <th>Real Price (Edit)</th>
+                  <th style="text-align: right">Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="analysis" class="content-section hidden">
+          <h2 class="section-title">Deep Analysis</h2>
+
+          <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('tabCategory')">
+              Per Category
+            </button>
+            <button class="tab-btn" onclick="openTab('tabSummary')">
+              Summary (Day/Week)
+            </button>
+            <button class="tab-btn" onclick="openTab('tabShopping')">
+              Shopping Analysis
+            </button>
+          </div>
+
+          <div id="tabCategory" class="tab-content active">
+            <div class="grid-2">
+              <div class="card">
+                <h3>Category Breakdown (Daily)</h3>
+                <div id="catDailyList" class="analysis-list"></div>
+              </div>
+              <div class="card">
+                <h3>Category Breakdown (Weekly)</h3>
+                <div id="catWeeklyList" class="analysis-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="tabSummary" class="tab-content">
+            <div class="card">
+              <h3>Daily Flow</h3>
+              <table class="table-compact" id="summaryDailyTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Inc</th>
+                    <th>Exp</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card" style="margin-top: 20px">
+              <h3>Weekly Flow</h3>
+              <table class="table-compact" id="summaryWeeklyTable">
+                <thead>
+                  <tr>
+                    <th>Week</th>
+                    <th>Inc</th>
+                    <th>Exp</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tabShopping" class="tab-content">
+            <div class="grid-3">
+              <div class="card stat-card">
+                <h3>Total Estimate</h3>
+                <div class="amount" id="anShopEst">Rp 0</div>
+              </div>
+              <div class="card stat-card">
+                <h3>Total Real (Checked)</h3>
+                <div class="amount text-success" id="anShopReal">Rp 0</div>
+              </div>
+              <div class="card stat-card">
+                <h3>Difference (Est - Real)</h3>
+                <div class="amount" id="anShopDiff">Rp 0</div>
+                <small class="text-muted"
+                  >Savings (Positive) / Overrun (Negative)</small
+                >
+              </div>
+            </div>
+            <div class="card">
+              <h3>Financial Projection</h3>
+              <p>
+                Projected impact on current balance if shopping plan is
+                executed:
+              </p>
+              <div style="margin-top: 15px; font-size: 1.1rem">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    border-bottom: 1px solid #333;
+                    padding: 10px 0;
+                  "
+                >
+                  <span>Current Wallet Balance:</span>
+                  <span id="anShopWallet" class="text-primary">Rp 0</span>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 10px 0;
+                  "
+                >
+                  <span>Projected (After Real Spending):</span>
+                  <span id="anShopProjected" style="font-weight: bold"
+                    >Rp 0</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+
+    <script>
+      function openTab(tabName) {
+        const contents = document.querySelectorAll(".tab-content");
+        const btns = document.querySelectorAll(".tab-btn");
+
+        contents.forEach((c) => c.classList.remove("active"));
+        btns.forEach((b) => b.classList.remove("active"));
+
+        document.getElementById(tabName).classList.add("active");
+        event.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
